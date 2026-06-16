@@ -144,9 +144,10 @@
             <span class="pulse-ring"></span>
             Talk to the AI now
           </a>
-          <a href="tel:+14154849488" class="inline-flex items-center justify-center gap-3 glass hover:bg-white/15 text-white font-semibold text-lg px-7 py-4 rounded-2xl transition">
+          <!-- Mobile-only: tap-to-call is most useful on a phone, so this is hidden on desktop (md:hidden) -->
+          <a href="tel:+14154849488" class="inline-flex md:hidden items-center justify-center gap-3 glass hover:bg-white/15 text-white font-semibold text-lg px-7 py-4 rounded-2xl transition">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24c1.12.37 2.33.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1.02l-2.2 2.2Z"/></svg>
-            Talk to a human
+            Call Mark directly
           </a>
         </div>
 
@@ -403,10 +404,11 @@
       <!-- OWNER CTA CARD -->
       <div class="mt-14 max-w-2xl mx-auto reveal rounded-2xl p-6 sm:p-7 text-left shadow-lift" style="background:linear-gradient(120deg,#11a5b8,#f97316);">
         <div class="sm:flex items-center gap-5">
-          <div class="w-14 h-14 rounded-full bg-white/20 ring-2 ring-white/60 text-white flex items-center justify-center shrink-0 text-2xl font-extrabold">M</div>
+          <!-- Mark's photo: save your headshot as mark.jpg next to index.html. object-cover crops it to a circle. -->
+          <img src="mark.jpg" alt="Mark, owner of AI-Voicelabs" class="w-16 h-16 rounded-full object-cover object-[center_25%] ring-2 ring-white/70 shrink-0 shadow-lift" onerror="this.outerHTML='&lt;div class=\'w-16 h-16 rounded-full bg-white/20 ring-2 ring-white/70 text-white flex items-center justify-center shrink-0 text-2xl font-extrabold\'&gt;M&lt;/div&gt;'" />
           <div class="flex-1 mt-4 sm:mt-0">
-            <p class="text-white font-semibold text-[15px] leading-snug">Like what you hear? I'll set one up for your company — your services, your area, your dispatch rules, your voice — and have it answering your emergency line within days. Pick from a handful of natural, professional voices. — Mark</p>
-            <p class="mt-1.5 text-[13px] text-white/90">Mark &middot; AI&#8209;Voicelabs &middot; <a href="mailto:hello@ai-voicelabs.com" class="underline underline-offset-2 font-medium">hello@ai-voicelabs.com</a></p>
+            <p class="text-white font-semibold text-[15px] leading-snug">Like what you hear? This is my own AI — I built it, and I'll set one up for your company personally: your services, your area, your dispatch rules, your voice — answering your emergency line within days. Pick from a handful of natural, professional voices. Got questions? Call or email me directly. — Mark</p>
+            <p class="mt-1.5 text-[13px] text-white/90">Mark &middot; Owner, AI&#8209;Voicelabs &middot; <a href="mailto:mark@ai-voicelabs.com" class="underline underline-offset-2 font-medium">mark@ai-voicelabs.com</a></p>
           </div>
         </div>
         <a href="tel:+14154849488" class="mt-5 w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-white text-ink font-extrabold text-lg px-7 py-4 rounded-xl shadow-lift hover:scale-[1.02] transition">
