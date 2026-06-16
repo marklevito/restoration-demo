@@ -139,10 +139,10 @@
         </p>
 
         <div class="mt-9 flex flex-col sm:flex-row gap-4">
-          <a id="hero-talk-btn" data-smart-btn data-icon-size="22" data-label-mic="Talk to the AI now" href="#"
+          <a id="hero-talk-btn" data-smart-btn data-icon-size="22" data-label-mic="Try it now" href="#"
              class="talk-btn inline-flex items-center justify-center gap-3 bg-ember text-white font-bold text-lg px-7 py-4 rounded-2xl shadow-lift hover:scale-[1.02] transition">
             <span class="pulse-ring"></span>
-            Talk to the AI now
+            Try it now
           </a>
           <!-- Mobile-only: tap-to-call is most useful on a phone, so this is hidden on desktop (md:hidden) -->
           <a href="tel:+14154849488" class="inline-flex md:hidden items-center justify-center gap-3 glass hover:bg-white/15 text-white font-semibold text-lg px-7 py-4 rounded-2xl transition">
@@ -152,7 +152,7 @@
         </div>
 
         <p class="mt-4 text-sm text-cyan-100/80">
-          Just click <span class="font-semibold text-white">Talk to the AI</span>, allow the microphone, and start speaking — right here in your browser.
+          Just click <span class="font-semibold text-white">Try it now</span>, allow the microphone, and start speaking — right here in your browser.
         </p>
 
         <div class="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 text-sm text-cyan-50/80">
@@ -378,12 +378,12 @@
       </p>
 
       <div class="mt-10 flex flex-col items-center gap-5">
-        <a id="demo-talk-btn" data-smart-btn data-icon-size="26" data-label-mic="Talk to the AI now"
+        <a id="demo-talk-btn" data-smart-btn data-icon-size="26" data-label-mic="Try it now"
            href="#" class="talk-btn inline-flex items-center justify-center gap-3 bg-ember text-white font-extrabold text-xl px-10 py-5 rounded-2xl shadow-lift hover:scale-[1.02] transition">
           <span class="pulse-ring"></span>
-          Talk to the AI now
+          Try it now
         </a>
-        <div class="text-cyan-50/80 text-sm">Just click <span class="font-semibold text-white">Talk to the AI</span>, allow the microphone, and start speaking.</div>
+        <div class="text-cyan-50/80 text-sm">Just click <span class="font-semibold text-white">Try it now</span>, allow the microphone, and start speaking.</div>
       </div>
 
       <!-- CHALLENGE PROMPTS -->
@@ -404,10 +404,10 @@
       <!-- OWNER CTA CARD -->
       <div class="mt-14 max-w-2xl mx-auto reveal rounded-2xl p-6 sm:p-7 text-left shadow-lift" style="background:linear-gradient(120deg,#11a5b8,#f97316);">
         <div class="sm:flex items-center gap-5">
-          <!-- Mark's photo: save your headshot as mark.jpg next to index.html. object-cover crops it to a circle. -->
-          <img src="mark.jpg" alt="Mark, owner of AI-Voicelabs" class="w-16 h-16 rounded-full object-cover object-[center_25%] ring-2 ring-white/70 shrink-0 shadow-lift" onerror="this.outerHTML='&lt;div class=\'w-16 h-16 rounded-full bg-white/20 ring-2 ring-white/70 text-white flex items-center justify-center shrink-0 text-2xl font-extrabold\'&gt;M&lt;/div&gt;'" />
+          <!-- Mark's photo: save your headshot as mark.png next to index.html. object-cover crops it to a circle. -->
+          <img src="mark.png" alt="Mark, owner of AI-Voicelabs" class="w-16 h-16 rounded-full object-cover object-[center_25%] ring-2 ring-white/70 shrink-0 shadow-lift" onerror="this.outerHTML='&lt;div class=\'w-16 h-16 rounded-full bg-white/20 ring-2 ring-white/70 text-white flex items-center justify-center shrink-0 text-2xl font-extrabold\'&gt;M&lt;/div&gt;'" />
           <div class="flex-1 mt-4 sm:mt-0">
-            <p class="text-white font-semibold text-[15px] leading-snug">Like what you hear? This is my own AI — I built it, and I'll set one up for your company personally: your services, your area, your dispatch rules, your voice — answering your emergency line within days. Pick from a handful of natural, professional voices. Got questions? Call or email me directly. — Mark</p>
+            <p class="text-white font-semibold text-[15px] leading-snug">I'm Mark, the owner — give it a try, then call or email me and I'll help you get set up.</p>
             <p class="mt-1.5 text-[13px] text-white/90">Mark &middot; Owner, AI&#8209;Voicelabs &middot; <a href="mailto:mark@ai-voicelabs.com" class="underline underline-offset-2 font-medium">mark@ai-voicelabs.com</a></p>
           </div>
         </div>
@@ -430,7 +430,7 @@
       <div class="mt-10 space-y-3">
         <details class="reveal group bg-slate-50 rounded-2xl border border-slate-100 p-5 open:shadow-card" open>
           <summary class="flex items-center justify-between cursor-pointer font-bold text-ink list-none">Does it sound like a robot? <span class="text-ember group-open:rotate-45 transition text-2xl leading-none">+</span></summary>
-          <p class="mt-3 text-slate-600 text-[15px]">No — natural and conversational, and calm with stressed callers. People regularly don't realize they're talking to an AI. If they ask, it's honest about it. Click <span class="font-semibold">Talk to the AI</span> above and judge for yourself.</p>
+          <p class="mt-3 text-slate-600 text-[15px]">No — natural and conversational, and calm with stressed callers. People regularly don't realize they're talking to an AI. If they ask, it's honest about it. Click <span class="font-semibold">Try it now</span> above and judge for yourself.</p>
         </details>
         <details class="reveal group bg-slate-50 rounded-2xl border border-slate-100 p-5 open:shadow-card">
           <summary class="flex items-center justify-between cursor-pointer font-bold text-ink list-none">What happens in a real emergency? <span class="text-ember group-open:rotate-45 transition text-2xl leading-none">+</span></summary>
@@ -530,7 +530,7 @@
           btn.innerHTML = (ring ? ring.outerHTML : '') + stopSVG(s) + ' End call';
           btn.classList.add('voice-active-btn');
         } else {
-          btn.innerHTML = (ring ? ring.outerHTML : '') + micSVG(s) + ' ' + (btn.dataset.labelMic || 'Talk to the AI now');
+          btn.innerHTML = (ring ? ring.outerHTML : '') + micSVG(s) + ' ' + (btn.dataset.labelMic || 'Try it now');
           btn.classList.remove('voice-active-btn');
         }
       });
@@ -587,7 +587,7 @@
       const s = btn.dataset.iconSize || '22';
       const ring = btn.querySelector('.pulse-ring');
       btn.href = '#';
-      btn.innerHTML = (ring ? ring.outerHTML : '') + micSVG(s) + ' ' + (btn.dataset.labelMic || 'Talk to the AI now');
+      btn.innerHTML = (ring ? ring.outerHTML : '') + micSVG(s) + ' ' + (btn.dataset.labelMic || 'Try it now');
       btn.addEventListener('click', e => { e.preventDefault(); toggle(); });
     });
 
