@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>An AI Receptionist for Restoration Companies — Answers Every Emergency, Books Every Job, 24/7</title>
+  <meta name="description" content="A calm, capable AI receptionist that answers your phones 24/7, triages water, fire, and mold emergencies with the right safety steps, captures insurance and adjuster calls, and books inspections into your calendar — in any language. Built for Bay Area restoration companies. Hear it for yourself." />
+  <meta name="theme-color" content="#06262f" />
+
+  <!-- Teal/ember microphone favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234fd1c5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' opacity='0.85'%3E%3Cpath d='M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z'/%3E%3Cpath d='M19 10v2a7 7 0 0 1-14 0v-2'/%3E%3Cline x1='12' y1='19' x2='12' y2='23'/%3E%3Cline x1='8' y1='23' x2='16' y2='23'/%3E%3C/svg%3E" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink:    '#06262f',   /* deep teal-navy: water, trust, calm */
+            ink2:   '#0a3947',
+            deep:   '#0e4a5c',
+            teal:   '#11a5b8',   /* clean water aqua */
+            aqua:   '#2dd4bf',
+            ember:  '#f97316',   /* emergency orange: fire, urgency, first-responder */
+            amber:  '#fbbf24',
+          },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          boxShadow: {
+            card: '0 10px 40px -12px rgba(6,38,47,0.20)',
+            lift: '0 24px 60px -20px rgba(6,38,47,0.34)',
+          }
+        }
+      }
+    };
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    html, body { font-family: 'Inter', system-ui, sans-serif; }
+
+    .hero-bg {
+      background:
+        radial-gradient(1100px 560px at 78% -10%, rgba(249,115,22,0.22), transparent 58%),
+        radial-gradient(950px 520px at 8% 8%, rgba(45,212,191,0.20), transparent 55%),
+        linear-gradient(160deg, #06262f 0%, #0a3947 55%, #0e4a5c 100%);
+    }
+    .accent-text {
+      background: linear-gradient(100deg, #2dd4bf, #5eead4);
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .ember-text {
+      background: linear-gradient(100deg, #fbbf24, #f97316);
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .glass {
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.16);
+    }
+
+    .talk-btn { position: relative; }
+    .talk-btn .pulse-ring {
+      position:absolute; inset:0; border-radius:9999px;
+      box-shadow:0 0 0 0 rgba(249,115,22,0.55);
+      animation: pulse 2.6s cubic-bezier(0.4,0,0.6,1) infinite;
+    }
+    @keyframes pulse {
+      0%   { box-shadow:0 0 0 0 rgba(249,115,22,0.45); }
+      70%  { box-shadow:0 0 0 22px rgba(249,115,22,0); }
+      100% { box-shadow:0 0 0 0 rgba(249,115,22,0); }
+    }
+    .voice-active-btn { background:#dc2626 !important; color:#fff !important; }
+    .voice-active-btn .pulse-ring { animation:none; box-shadow:none; }
+
+    .reveal { opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease; }
+    .reveal.in { opacity:1; transform:none; }
+
+    #voice-bar { transform:translateY(140%); transition:transform .35s ease; }
+    #voice-bar.active { transform:translateY(0); }
+
+    .eq { display:inline-flex; align-items:flex-end; gap:3px; height:18px; }
+    .eq span { width:3px; background:currentColor; border-radius:2px; animation:eq 1s ease-in-out infinite; }
+    .eq span:nth-child(2){ animation-delay:.15s } .eq span:nth-child(3){ animation-delay:.3s }
+    .eq span:nth-child(4){ animation-delay:.45s } .eq span:nth-child(5){ animation-delay:.2s }
+    @keyframes eq { 0%,100%{height:5px} 50%{height:18px} }
+  </style>
+</head>
+
+<body class="bg-white text-slate-800 antialiased">
+
+  <!-- ===================== STICKY NAV ===================== -->
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-100">
+    <div class="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-teal to-aqua flex items-center justify-center text-white shadow-card">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg>
+        </div>
+        <div class="leading-tight">
+          <div class="font-extrabold text-ink text-[15px]">AI&#8209;Voicelabs</div>
+          <div class="text-[11px] text-slate-400 -mt-0.5">AI receptionists for restoration</div>
+        </div>
+      </div>
+      <nav class="hidden md:flex items-center gap-7 text-sm font-medium text-slate-600">
+        <a href="#how" class="hover:text-ink transition">How it works</a>
+        <a href="#features" class="hover:text-ink transition">What it does</a>
+        <a href="#demo" class="hover:text-ink transition">Try it live</a>
+        <a href="#faq" class="hover:text-ink transition">FAQ</a>
+      </nav>
+      <a href="tel:+14154849488" class="inline-flex items-center gap-2 bg-ink hover:bg-ink2 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition shadow-card">
+        Call (415) 484&#8209;9488
+      </a>
+    </div>
+  </header>
+
+  <!-- ===================== HERO ===================== -->
+  <section class="hero-bg text-white relative overflow-hidden">
+    <div class="max-w-6xl mx-auto px-5 pt-16 pb-20 md:pt-24 md:pb-28 grid lg:grid-cols-12 gap-12 items-center">
+
+      <div class="lg:col-span-7">
+        <div class="inline-flex items-center gap-2 glass rounded-full px-3.5 py-1.5 text-[13px] font-medium text-teal-100 mb-6">
+          <span class="w-2 h-2 rounded-full bg-ember animate-pulse"></span>
+          Built for restoration companies in Marin, Sonoma &amp; the Bay Area
+        </div>
+
+        <h1 class="text-4xl md:text-[3.25rem] leading-[1.08] font-extrabold tracking-tight">
+          The pipe burst at 2&nbsp;a.m.<br>
+          They called you first.<br>
+          <span class="ember-text">Did you pick up?</span>
+        </h1>
+
+        <p class="mt-6 text-lg md:text-xl text-cyan-50/90 max-w-xl">
+          Restoration is a first-responder business — and the first company to answer almost always wins the job.
+          This AI receptionist answers every call around the clock, calmly walks panicked callers through the right
+          safety steps, captures the loss details and insurance info, and books the inspection straight into your calendar.
+          No missed calls. No lost jobs. No voicemail tag while the water keeps rising.
+        </p>
+
+        <div class="mt-9 flex flex-col sm:flex-row gap-4">
+          <a id="hero-talk-btn" data-smart-btn data-icon-size="22" data-label-mic="Talk to the AI now" href="#"
+             class="talk-btn inline-flex items-center justify-center gap-3 bg-ember text-white font-bold text-lg px-7 py-4 rounded-2xl shadow-lift hover:scale-[1.02] transition">
+            <span class="pulse-ring"></span>
+            Talk to the AI now
+          </a>
+          <a href="tel:+14154849488" class="inline-flex items-center justify-center gap-3 glass hover:bg-white/15 text-white font-semibold text-lg px-7 py-4 rounded-2xl transition">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24c1.12.37 2.33.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1.02l-2.2 2.2Z"/></svg>
+            Talk to a human
+          </a>
+        </div>
+
+        <p class="mt-4 text-sm text-cyan-100/80">
+          Just click <span class="font-semibold text-white">Talk to the AI</span>, allow the microphone, and start speaking — right here in your browser.
+        </p>
+
+        <div class="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 text-sm text-cyan-50/80">
+          <div class="flex items-center gap-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5eead4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> 24/7 emergency answering</div>
+          <div class="flex items-center gap-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5eead4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Safety triage built in</div>
+          <div class="flex items-center gap-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5eead4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Books into your calendar</div>
+        </div>
+      </div>
+
+      <!-- Live "phone" mockup -->
+      <div class="lg:col-span-5 reveal">
+        <div class="relative mx-auto w-full max-w-sm">
+          <div class="absolute -inset-4 bg-gradient-to-tr from-ember/25 to-aqua/25 blur-2xl rounded-[2.5rem]"></div>
+          <div class="relative bg-white rounded-[2rem] shadow-lift p-5 text-slate-800">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-ember"></span>
+                <span class="text-sm font-semibold text-ink">Incoming call &middot; 2:14 AM</span>
+              </div>
+              <span class="text-[11px] font-medium text-slate-400">Your AI receptionist</span>
+            </div>
+            <div class="py-4 space-y-3 text-[13.5px]">
+              <div class="flex"><div class="bg-slate-100 rounded-2xl rounded-tl-sm px-3.5 py-2 max-w-[80%]">A pipe upstairs burst — water's pouring through the kitchen ceiling!</div></div>
+              <div class="flex justify-end"><div class="bg-teal text-white rounded-2xl rounded-tr-sm px-3.5 py-2 max-w-[85%]">I'm sorry this is happening — we'll get someone moving. Is the water still flowing? If you can safely reach the main shutoff, turn it off and come right back. I'll wait.</div></div>
+              <div class="flex"><div class="bg-slate-100 rounded-2xl rounded-tl-sm px-3.5 py-2 max-w-[80%]">Okay, I shut the main off.</div></div>
+              <div class="flex justify-end"><div class="bg-teal text-white rounded-2xl rounded-tr-sm px-3.5 py-2 max-w-[85%]">Good. Let me confirm the address — one zero zero five five Pine Street, Larkspur. I'm dispatching this now. You'll get a callback within fifteen minutes.</div></div>
+            </div>
+            <div class="mt-1 pt-3 border-t border-slate-100 flex items-center justify-between">
+              <div class="flex items-center gap-2 text-emerald-600 text-xs font-semibold">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                Dispatched URGENT &middot; David texted
+              </div>
+              <span class="text-[11px] text-slate-400">0 missed calls today</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- wave divider -->
+    <div class="text-white">
+      <svg viewBox="0 0 1440 80" class="w-full block" preserveAspectRatio="none" height="56"><path fill="currentColor" d="M0,40 C240,80 480,0 720,24 C960,48 1200,88 1440,48 L1440,80 L0,80 Z"/></svg>
+    </div>
+  </section>
+
+  <!-- ===================== TRUST / STAKES STRIP ===================== -->
+  <section class="bg-white">
+    <div class="max-w-6xl mx-auto px-5 -mt-6 pb-4">
+      <div class="grid sm:grid-cols-3 gap-4 reveal">
+        <div class="bg-white rounded-2xl shadow-card border border-slate-100 p-6 text-center">
+          <div class="text-3xl font-extrabold text-ink">First call</div>
+          <p class="mt-1 text-sm text-slate-500">wins. Homeowners dial several companies in a crisis — whoever answers live almost always gets the job.</p>
+        </div>
+        <div class="bg-ink rounded-2xl shadow-card p-6 text-center text-white">
+          <div class="text-3xl font-extrabold ember-text">One job</div>
+          <p class="mt-1 text-sm text-cyan-100/80">There's no such thing as a $200 restoration job. A single saved mitigation covers the service many times over.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-card border border-slate-100 p-6 text-center">
+          <div class="text-3xl font-extrabold text-ink">40&ndash;55%</div>
+          <p class="mt-1 text-sm text-slate-500">of restoration demand hits after hours — nights and weekends, exactly when most offices go to voicemail.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PAIN POINTS ===================== -->
+  <section class="py-20 md:py-24 bg-white">
+    <div class="max-w-6xl mx-auto px-5">
+      <div class="max-w-2xl reveal">
+        <p class="text-teal font-semibold tracking-wide uppercase text-sm">Sound familiar?</p>
+        <h2 class="mt-2 text-3xl md:text-4xl font-extrabold text-ink tracking-tight">When the call comes in, the clock is already running.</h2>
+        <p class="mt-4 text-lg text-slate-600">Water spreads by the minute and panicked callers won't wait. Every call that hits voicemail is a five-figure job handed to the next company on Google. Here's where it leaks.</p>
+      </div>
+
+      <div class="mt-12 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="reveal bg-slate-50 rounded-2xl border border-slate-100 p-7">
+          <div class="text-2xl">🌊</div>
+          <h3 class="mt-3 font-bold text-ink text-lg">You're on a job site, suited up</h3>
+          <p class="mt-2 text-slate-600 text-[15px]">Your crew is mid-extraction and can't stop to answer. The phone rings out, the homeowner panics, and a fresh water loss walks straight to a competitor.</p>
+        </div>
+        <div class="reveal bg-slate-50 rounded-2xl border border-slate-100 p-7">
+          <div class="text-2xl">🌙</div>
+          <h3 class="mt-3 font-bold text-ink text-lg">2 a.m. burst-pipe calls</h3>
+          <p class="mt-2 text-slate-600 text-[15px]">Disasters don't keep business hours. A homeowner standing in two inches of water won't leave a voicemail — they call the next 24/7 listing they find.</p>
+        </div>
+        <div class="reveal bg-slate-50 rounded-2xl border border-slate-100 p-7">
+          <div class="text-2xl">🔥</div>
+          <h3 class="mt-3 font-bold text-ink text-lg">Some calls are real emergencies</h3>
+          <p class="mt-2 text-slate-600 text-[15px]">Gas smell, active fire, electrical near standing water, sewage with kids in the home. A generic call center can't tell those apart — or give the right safety steps.</p>
+        </div>
+        <div class="reveal bg-slate-50 rounded-2xl border border-slate-100 p-7">
+          <div class="text-2xl">📍</div>
+          <h3 class="mt-3 font-bold text-ink text-lg">Wrong address, blown response</h3>
+          <p class="mt-2 text-slate-600 text-[15px]">"Larkspur" heard as "Lake Spur." A transposed house number. Your tech loses an hour at the wrong door while the loss gets worse. Bad intake is expensive in this business.</p>
+        </div>
+        <div class="reveal bg-slate-50 rounded-2xl border border-slate-100 p-7">
+          <div class="text-2xl">📋</div>
+          <h3 class="mt-3 font-bold text-ink text-lg">Adjuster &amp; TPA calls get fumbled</h3>
+          <p class="mt-2 text-slate-600 text-[15px]">An assignment from a carrier or program comes in and the message gets garbled — or someone says too much about a job they shouldn't. Lost assignments, awkward calls.</p>
+        </div>
+        <div class="reveal bg-slate-50 rounded-2xl border border-slate-100 p-7">
+          <div class="text-2xl">💸</div>
+          <h3 class="mt-3 font-bold text-ink text-lg">A 24/7 desk costs a fortune</h3>
+          <p class="mt-2 text-slate-600 text-[15px]">Round-the-clock human coverage means multiple salaries plus payroll tax, turnover, and sick days — and answering services still read a flat script and miss the urgency.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== HOW IT WORKS ===================== -->
+  <section id="how" class="py-20 md:py-24 bg-slate-50">
+    <div class="max-w-6xl mx-auto px-5">
+      <div class="max-w-2xl reveal">
+        <p class="text-teal font-semibold tracking-wide uppercase text-sm">How it works</p>
+        <h2 class="mt-2 text-3xl md:text-4xl font-extrabold text-ink tracking-tight">A trained intake desk — handled, start to finish.</h2>
+        <p class="mt-4 text-lg text-slate-600">It doesn't just "take a message." It runs the whole call the way your best intake coordinator would — calm, fast, and accurate — then dispatches the emergency or books the inspection and notifies your team.</p>
+      </div>
+
+      <div class="mt-12 grid md:grid-cols-3 gap-6">
+        <div class="reveal bg-white rounded-2xl border border-slate-100 shadow-card p-7">
+          <div class="w-11 h-11 rounded-xl bg-teal/10 text-teal flex items-center justify-center font-extrabold text-lg">1</div>
+          <h3 class="mt-4 font-bold text-ink text-lg">Answers &amp; classifies</h3>
+          <p class="mt-2 text-slate-600 text-[15px]">Picks up on the first ring, day or night. Quickly sorts the call — active emergency, recent loss, mold, inspection request, or an adjuster — and stays calm with stressed callers.</p>
+        </div>
+        <div class="reveal bg-white rounded-2xl border border-slate-100 shadow-card p-7">
+          <div class="w-11 h-11 rounded-xl bg-ember/10 text-ember flex items-center justify-center font-extrabold text-lg">2</div>
+          <h3 class="mt-4 font-bold text-ink text-lg">Triages &amp; protects</h3>
+          <p class="mt-2 text-slate-600 text-[15px]">Fire, gas, electrical near water, Category 3 sewage — it runs the right safety script first (get out, shut the valve, call 911) before anything else, then flags the job.</p>
+        </div>
+        <div class="reveal bg-white rounded-2xl border border-slate-100 shadow-card p-7">
+          <div class="w-11 h-11 rounded-xl bg-teal/10 text-teal flex items-center justify-center font-extrabold text-lg">3</div>
+          <h3 class="mt-4 font-bold text-ink text-lg">Dispatches or books</h3>
+          <p class="mt-2 text-slate-600 text-[15px]">Captures the loss details and insurance info, then dispatches an emergency to your on-call tech or books an inspection on your real calendar — and texts and emails you the job.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FEATURES ===================== -->
+  <section id="features" class="py-20 md:py-24 bg-white">
+    <div class="max-w-6xl mx-auto px-5">
+      <div class="max-w-2xl reveal">
+        <p class="text-teal font-semibold tracking-wide uppercase text-sm">What it does</p>
+        <h2 class="mt-2 text-3xl md:text-4xl font-extrabold text-ink tracking-tight">Everything a great intake desk does — and a few things they can't.</h2>
+      </div>
+
+      <div class="mt-12 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- 24/7 -->
+        <div class="reveal group bg-slate-50 hover:bg-white rounded-2xl border border-slate-100 hover:shadow-lift transition p-7">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-teal to-aqua text-white flex items-center justify-center">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          </div>
+          <h3 class="mt-4 font-bold text-ink text-lg">Answers 24/7</h3>
+          <p class="mt-2 text-slate-600 text-[15px]">Nights, weekends, holidays, or when your whole crew is on a loss with no free hands. Every caller reaches a calm, capable voice instead of a beep.</p>
+        </div>
+
+        <!-- Emergency triage -->
+        <div class="reveal group bg-slate-50 hover:bg-white rounded-2xl border border-slate-100 hover:shadow-lift transition p-7">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber to-ember text-white flex items-center justify-center">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+          </div>
+          <h3 class="mt-4 font-bold text-ink text-lg">Emergency safety triage</h3>
+          <p class="mt-2 text-slate-600 text-[15px]">Active fire, gas leaks, electrical hazards near water, Category 3 sewage with vulnerable people — it gives the correct safety steps first and flags the job URGENT for fast dispatch.</p>
+        </div>
+
+        <!-- Calendar -->
+        <div class="reveal group bg-slate-50 hover:bg-white rounded-2xl border border-slate-100 hover:shadow-lift transition p-7">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-teal to-aqua text-white flex items-center justify-center">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>
+          </div>
+          <h3 class="mt-4 font-bold text-ink text-lg">Books &amp; reschedules inspections</h3>
+          <p class="mt-2 text-slate-600 text-[15px]">It checks your live availability, offers real arrival windows by job type — water, fire, mold, sewage — writes it into your calendar, and handles cancels and reschedules. No double-bookings.</p>
+        </div>
+
+        <!-- Insurance / adjuster -->
+        <div class="reveal group bg-slate-50 hover:bg-white rounded-2xl border border-slate-100 hover:shadow-lift transition p-7">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-teal to-aqua text-white flex items-center justify-center">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3 class="mt-4 font-bold text-ink text-lg">Handles insurance &amp; adjuster calls</h3>
+          <p class="mt-2 text-slate-600 text-[15px]">It captures carrier, claim, and assignment details from adjusters and TPAs, routes program work correctly — and is careful never to confirm a customer or quote coverage it shouldn't.</p>
+        </div>
+
+        <!-- Digit-perfect -->
+        <div class="reveal group bg-slate-50 hover:bg-white rounded-2xl border border-slate-100 hover:shadow-lift transition p-7">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-teal to-aqua text-white flex items-center justify-center">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <h3 class="mt-4 font-bold text-ink text-lg">Gets the address right — every time</h3>
+          <p class="mt-2 text-slate-600 text-[15px]">It reads every phone number, claim number, and house number back digit by digit, and knows Marin towns cold — Larkspur, Corte Madera, San Anselmo, Tiburon, Sausalito — so your tech never rolls to the wrong street.</p>
+        </div>
+
+        <!-- Multilingual -->
+        <div class="reveal group bg-slate-50 hover:bg-white rounded-2xl border border-slate-100 hover:shadow-lift transition p-7">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-teal to-aqua text-white flex items-center justify-center">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
+          </div>
+          <h3 class="mt-4 font-bold text-ink text-lg">Speaks over thirty languages</h3>
+          <p class="mt-2 text-slate-600 text-[15px]">English, Spanish, and dozens more — automatically. A Spanish-speaking homeowner in crisis gets the same calm, accurate intake as anyone else. No more leads lost to a language barrier.</p>
+        </div>
+
+      </div>
+
+      <!-- Customizable callout -->
+      <div class="mt-10 reveal rounded-2xl bg-ink text-white p-8 md:p-10 flex flex-col md:flex-row items-start md:items-center gap-6 justify-between">
+        <div class="max-w-2xl">
+          <h3 class="text-2xl font-extrabold">Tuned to your shop — not a generic bot.</h3>
+          <p class="mt-2 text-cyan-100/85">Your service area, your loss types and inspection lengths, your on-call dispatch rules, the carriers and programs you work with, your hours, your greeting. We set the rules; it follows them every single call. Want it to mention your IICRC certification or your response-time guarantee? Done.</p>
+        </div>
+        <a href="#demo" class="shrink-0 inline-flex items-center gap-2 bg-ember text-white font-bold px-6 py-3.5 rounded-xl hover:scale-[1.02] transition shadow-lift">Hear it now &rarr;</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== DEMO ===================== -->
+  <section id="demo" class="py-20 md:py-28 hero-bg text-white relative overflow-hidden">
+    <div class="max-w-4xl mx-auto px-5 text-center reveal">
+      <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight">Don't take our word for it.<br><span class="accent-text">Talk to it yourself.</span></h2>
+      <p class="mt-5 text-lg md:text-xl text-cyan-50/90 max-w-2xl mx-auto">
+        Tell it your basement is flooding. Say you smell gas. Report mold after a leak. Try it in Spanish.
+        See how it handles a real restoration call — the same way it'll handle yours.
+      </p>
+
+      <div class="mt-10 flex flex-col items-center gap-5">
+        <a id="demo-talk-btn" data-smart-btn data-icon-size="26" data-label-mic="Talk to the AI now"
+           href="#" class="talk-btn inline-flex items-center justify-center gap-3 bg-ember text-white font-extrabold text-xl px-10 py-5 rounded-2xl shadow-lift hover:scale-[1.02] transition">
+          <span class="pulse-ring"></span>
+          Talk to the AI now
+        </a>
+        <div class="text-cyan-50/80 text-sm">Just click <span class="font-semibold text-white">Talk to the AI</span>, allow the microphone, and start speaking.</div>
+      </div>
+
+      <!-- CHALLENGE PROMPTS -->
+      <div class="mt-12 max-w-3xl mx-auto reveal text-left">
+        <p class="text-center text-teal-200 text-sm font-bold uppercase tracking-wide">Not sure what to say? Throw your hardest calls at it</p>
+        <div class="mt-5 grid sm:grid-cols-2 gap-3">
+          <div class="glass rounded-xl px-4 py-3"><div class="text-cyan-50 text-[15px]">"A pipe burst and my basement is flooding right now!"</div><div class="text-[12px] text-teal-200/80 mt-1">&rarr; emergency triage, shutoff guidance &amp; dispatch</div></div>
+          <div class="glass rounded-xl px-4 py-3"><div class="text-cyan-50 text-[15px]">"I think I smell gas."</div><div class="text-[12px] text-teal-200/80 mt-1">&rarr; runs the safety script before anything else</div></div>
+          <div class="glass rounded-xl px-4 py-3"><div class="text-cyan-50 text-[15px]">"We had a small leak last week and now there's mold."</div><div class="text-[12px] text-teal-200/80 mt-1">&rarr; mold intake &amp; schedules an inspection</div></div>
+          <div class="glass rounded-xl px-4 py-3"><div class="text-cyan-50 text-[15px]">Start speaking to it in Spanish.</div><div class="text-[12px] text-teal-200/80 mt-1">&rarr; it answers in the caller's language</div></div>
+          <div class="glass rounded-xl px-4 py-3"><div class="text-cyan-50 text-[15px]">"It's at 10055 Pine Street, Larkspur."</div><div class="text-[12px] text-teal-200/80 mt-1">&rarr; reads numbers &amp; Marin towns back perfectly</div></div>
+          <div class="glass rounded-xl px-4 py-3"><div class="text-cyan-50 text-[15px]">"I'm an adjuster with State Farm, I have an assignment."</div><div class="text-[12px] text-teal-200/80 mt-1">&rarr; captures claim details, stays buttoned-up</div></div>
+          <div class="glass rounded-xl px-4 py-3"><div class="text-cyan-50 text-[15px]">"How much will this cost me?"</div><div class="text-[12px] text-teal-200/80 mt-1">&rarr; watch it politely decline to quote</div></div>
+          <div class="glass rounded-xl px-4 py-3"><div class="text-cyan-50 text-[15px]">"Wait — am I talking to a real person?"</div><div class="text-[12px] text-teal-200/80 mt-1">&rarr; honest, on-brand answer</div></div>
+        </div>
+      </div>
+
+      <!-- OWNER CTA CARD -->
+      <div class="mt-14 max-w-2xl mx-auto reveal rounded-2xl p-6 sm:p-7 text-left shadow-lift" style="background:linear-gradient(120deg,#11a5b8,#f97316);">
+        <div class="sm:flex items-center gap-5">
+          <div class="w-14 h-14 rounded-full bg-white/20 ring-2 ring-white/60 text-white flex items-center justify-center shrink-0 text-2xl font-extrabold">M</div>
+          <div class="flex-1 mt-4 sm:mt-0">
+            <p class="text-white font-semibold text-[15px] leading-snug">Like what you hear? I'll set one up for your company — your services, your area, your dispatch rules, your voice — and have it answering your emergency line within days. Pick from a handful of natural, professional voices. — Mark</p>
+            <p class="mt-1.5 text-[13px] text-white/90">Mark &middot; AI&#8209;Voicelabs &middot; <a href="mailto:hello@ai-voicelabs.com" class="underline underline-offset-2 font-medium">hello@ai-voicelabs.com</a></p>
+          </div>
+        </div>
+        <a href="tel:+14154849488" class="mt-5 w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-white text-ink font-extrabold text-lg px-7 py-4 rounded-xl shadow-lift hover:scale-[1.02] transition">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24c1.12.37 2.33.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1.02l-2.2 2.2Z"/></svg>
+          Call or text — (415) 484&#8209;9488
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FAQ ===================== -->
+  <section id="faq" class="py-20 md:py-24 bg-white">
+    <div class="max-w-3xl mx-auto px-5">
+      <div class="text-center reveal">
+        <p class="text-teal font-semibold tracking-wide uppercase text-sm">Straight answers</p>
+        <h2 class="mt-2 text-3xl md:text-4xl font-extrabold text-ink tracking-tight">The questions every owner asks.</h2>
+      </div>
+
+      <div class="mt-10 space-y-3">
+        <details class="reveal group bg-slate-50 rounded-2xl border border-slate-100 p-5 open:shadow-card" open>
+          <summary class="flex items-center justify-between cursor-pointer font-bold text-ink list-none">Does it sound like a robot? <span class="text-ember group-open:rotate-45 transition text-2xl leading-none">+</span></summary>
+          <p class="mt-3 text-slate-600 text-[15px]">No — natural and conversational, and calm with stressed callers. People regularly don't realize they're talking to an AI. If they ask, it's honest about it. Click <span class="font-semibold">Talk to the AI</span> above and judge for yourself.</p>
+        </details>
+        <details class="reveal group bg-slate-50 rounded-2xl border border-slate-100 p-5 open:shadow-card">
+          <summary class="flex items-center justify-between cursor-pointer font-bold text-ink list-none">What happens in a real emergency? <span class="text-ember group-open:rotate-45 transition text-2xl leading-none">+</span></summary>
+          <p class="mt-3 text-slate-600 text-[15px]">Safety comes first. For active fire, a gas smell, electrical hazards near water, or Category 3 sewage with vulnerable people, it gives the right steps immediately — leave the building, shut the valve, call 911 — then flags the job URGENT and notifies your on-call tech fast by text, email, or call.</p>
+        </details>
+        <details class="reveal group bg-slate-50 rounded-2xl border border-slate-100 p-5 open:shadow-card">
+          <summary class="flex items-center justify-between cursor-pointer font-bold text-ink list-none">Can it handle adjusters, TPAs, and program work? <span class="text-ember group-open:rotate-45 transition text-2xl leading-none">+</span></summary>
+          <p class="mt-3 text-slate-600 text-[15px]">Yes. It captures carrier, claim, and assignment numbers accurately, routes program calls to the right person, and follows your rules on which programs you accept — while never confirming a customer or quoting coverage it shouldn't.</p>
+        </details>
+        <details class="reveal group bg-slate-50 rounded-2xl border border-slate-100 p-5 open:shadow-card">
+          <summary class="flex items-center justify-between cursor-pointer font-bold text-ink list-none">Do I have to change my phone number or my calendar? <span class="text-ember group-open:rotate-45 transition text-2xl leading-none">+</span></summary>
+          <p class="mt-3 text-slate-600 text-[15px]">No. You keep your existing number, and it books straight into the calendar you already use. Route all calls to it, or just your overflow and after-hours emergency line. Nothing about how you run jobs changes — you just stop missing calls.</p>
+        </details>
+        <details class="reveal group bg-slate-50 rounded-2xl border border-slate-100 p-5 open:shadow-card">
+          <summary class="flex items-center justify-between cursor-pointer font-bold text-ink list-none">Can it reschedule or cancel inspections too? <span class="text-ember group-open:rotate-45 transition text-2xl leading-none">+</span></summary>
+          <p class="mt-3 text-slate-600 text-[15px]">Yes — it handles the whole appointment, not just the booking. A customer can call back to move or cancel an inspection, and the AI updates your calendar instantly so it's never double-booked or holding a slot it shouldn't.</p>
+        </details>
+        <details class="reveal group bg-slate-50 rounded-2xl border border-slate-100 p-5 open:shadow-card">
+          <summary class="flex items-center justify-between cursor-pointer font-bold text-ink list-none">How fast can I be live, and am I locked in? <span class="text-ember group-open:rotate-45 transition text-2xl leading-none">+</span></summary>
+          <p class="mt-3 text-slate-600 text-[15px]">Most setups are live within days. Plans are month-to-month — no long-term contract, cancel anytime. It should earn your business every month.</p>
+        </details>
+      </div>
+
+      <!-- bottom CTA -->
+      <div class="mt-12 text-center reveal">
+        <a href="tel:+14154849488" class="inline-flex items-center justify-center gap-3 bg-ember hover:brightness-95 text-white font-bold text-lg px-8 py-4 rounded-2xl shadow-lift transition">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24c1.12.37 2.33.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1.02l-2.2 2.2Z"/></svg>
+          Stop missing calls — (415) 484&#8209;9488
+        </a>
+        <p class="mt-3 text-sm text-slate-400">Or email <a href="mailto:hello@ai-voicelabs.com" class="text-teal font-medium underline underline-offset-2">hello@ai-voicelabs.com</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="bg-ink text-cyan-100/80 py-12">
+    <div class="max-w-6xl mx-auto px-5 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-teal to-aqua flex items-center justify-center text-white">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg>
+        </div>
+        <div>
+          <div class="text-white font-bold">AI&#8209;Voicelabs</div>
+          <div class="text-xs text-cyan-200/70">AI receptionists for restoration companies · Marin County, CA</div>
+        </div>
+      </div>
+      <div class="text-sm text-center md:text-right">
+        <div><a href="tel:+14154849488" class="text-white font-semibold">(415) 484&#8209;9488</a> &middot; <a href="mailto:hello@ai-voicelabs.com" class="underline underline-offset-2">hello@ai-voicelabs.com</a></div>
+        <div class="text-xs text-cyan-200/60 mt-1">&copy; 2026 AI-Voicelabs · operated by ECOM3 BRANDS, LLC</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===================== VOICE STATUS BAR ===================== -->
+  <div id="voice-bar" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 bg-ink text-white px-5 py-3 rounded-2xl shadow-lift border border-white/10">
+    <span id="vb-dot" class="w-3 h-3 rounded-full bg-aqua"></span>
+    <span id="vb-eq" class="eq text-aqua hidden"><span></span><span></span><span></span><span></span><span></span></span>
+    <span id="vb-text" class="text-sm font-semibold">Connecting…</span>
+    <button id="vb-end-btn" class="ml-2 text-xs font-bold bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded-lg transition">End call</button>
+  </div>
+
+  <!-- ============================================================================ -->
+  <!-- VOICE SESSION LOGIC                                                          -->
+  <!-- "Talk to the AI" starts an in-browser ElevenLabs voice session (desktop +    -->
+  <!-- mobile). No phone dialing for the demo.                                      -->
+  <!-- ============================================================================ -->
+  <script type="module">
+    /* ┌────────────────────────────────────────────────────────────────────┐
+       │  TO SWAP THE AGENT: paste your ElevenLabs restoration agent ID here.│
+       │  (Currently a PLACEHOLDER — replace before going live.)             │
+       └────────────────────────────────────────────────────────────────────┘ */
+    const AGENT_ID = 'PASTE_RESTORATION_AGENT_ID_HERE';   // restoration demo agent
+
+    const micSVG  = (s) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>`;
+    const stopSVG = (s) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>`;
+
+    const bar    = document.getElementById('voice-bar');
+    const vbDot  = document.getElementById('vb-dot');
+    const vbEq   = document.getElementById('vb-eq');
+    const vbText = document.getElementById('vb-text');
+    const vbEnd  = document.getElementById('vb-end-btn');
+
+    function showBar(text, color, listening=false) {
+      vbDot.style.background = color;
+      vbDot.classList.toggle('hidden', listening);
+      vbEq.classList.toggle('hidden', !listening);
+      vbText.textContent = text;
+      bar.classList.add('active');
+    }
+    function hideBar(){ bar.classList.remove('active'); }
+
+    function setButtonsActive(active){
+      document.querySelectorAll('[data-smart-btn]').forEach(btn => {
+        const s = btn.dataset.iconSize || '22';
+        const ring = btn.querySelector('.pulse-ring');
+        if (active){
+          btn.innerHTML = (ring ? ring.outerHTML : '') + stopSVG(s) + ' End call';
+          btn.classList.add('voice-active-btn');
+        } else {
+          btn.innerHTML = (ring ? ring.outerHTML : '') + micSVG(s) + ' ' + (btn.dataset.labelMic || 'Talk to the AI now');
+          btn.classList.remove('voice-active-btn');
+        }
+      });
+    }
+
+    // Load ElevenLabs client (all devices)
+    let Conversation = null;
+    for (const cdn of ['https://esm.sh/@elevenlabs/client','https://cdn.jsdelivr.net/npm/@elevenlabs/client/+esm']){
+      try { const m = await import(cdn); Conversation = m.Conversation ?? m.default?.Conversation ?? null; if (Conversation) break; }
+      catch(e){ console.warn('CDN failed:', cdn, e); }
+    }
+    if (!Conversation) console.error('ElevenLabs client failed to load from all CDNs.');
+
+    let session = null;
+    async function endSession(){
+      if (session){ try { await session.endSession(); } catch(e){} session = null; }
+      hideBar(); setButtonsActive(false);
+    }
+    async function toggle(){
+      if (session){ await endSession(); return; }
+      if (!Conversation){ alert('Voice chat could not start. Please refresh the page and try again.'); return; }
+      if (AGENT_ID === 'PASTE_RESTORATION_AGENT_ID_HERE'){
+        alert('Demo not configured yet: paste your ElevenLabs restoration agent ID into AGENT_ID in this file.');
+        return;
+      }
+      showBar('Connecting…', '#11a5b8');
+      setButtonsActive(true);
+      try {
+        session = await Conversation.startSession({
+          agentId: AGENT_ID,
+          connectionType: 'websocket',
+          onConnect:    () => showBar('Listening — go ahead and speak', '#22c55e', true),
+          onDisconnect: () => { session = null; hideBar(); setButtonsActive(false); },
+          onModeChange: ({ mode }) => {
+            if (mode === 'speaking') showBar('The AI is speaking…', '#11a5b8', false);
+            else showBar('Listening — go ahead and speak', '#22c55e', true);
+          },
+          onError: (err) => { console.error('Session error:', err); session = null; hideBar(); setButtonsActive(false); },
+        });
+      } catch(e){
+        console.error('startSession error:', e);
+        session = null; hideBar(); setButtonsActive(false);
+        const msg = String(e).toLowerCase();
+        if (msg.includes('micro') || msg.includes('permission') || msg.includes('notallowed'))
+          alert('Please allow microphone access when your browser asks, then try again.');
+        else
+          alert('Could not start the voice session. Please refresh the page and try again.');
+      }
+    }
+
+    vbEnd.addEventListener('click', endSession);
+
+    document.querySelectorAll('[data-smart-btn]').forEach(btn => {
+      const s = btn.dataset.iconSize || '22';
+      const ring = btn.querySelector('.pulse-ring');
+      btn.href = '#';
+      btn.innerHTML = (ring ? ring.outerHTML : '') + micSVG(s) + ' ' + (btn.dataset.labelMic || 'Talk to the AI now');
+      btn.addEventListener('click', e => { e.preventDefault(); toggle(); });
+    });
+
+    // Reveal-on-scroll
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(en => { if (en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  </script>
+</body>
+</html>
